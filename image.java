@@ -195,7 +195,7 @@ public class image
 		ArrayList<Integer> pastradii = new ArrayList<Integer>();
 		for (int j = 0; j < 2*NUM_BANDS; j++)
 		{
-			if (!drawBarLine(barLines, pastradii, i)) j--;
+			if (!drawBarLine(barLines, pastradii, img)) j--;
 		}
 		System.out.println();
 		time("perpendicular lines drawn");

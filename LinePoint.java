@@ -7,16 +7,12 @@ public class LinePoint
 	HashSet<Point> points;
 	int r;
 	double theta;
-	int imgWidth;
-	int imgHeight;
 	int frequency;
 	
 	public LinePoint()
 	{
 		r = 0;	
 		points = new HashSet<Point>();
-		imgWidth = 0;
-		imgHeight = 0;
 		frequency = 0;
 	}
 
@@ -25,8 +21,6 @@ public class LinePoint
 		r = radius;
 		theta = t;
 		points = new HashSet<Point>();
-		imgWidth = img.getWidth();
-		imgHeight = img.getHeight();
 		frequency = 0;
 		fillLine(img);
 	}
@@ -44,13 +38,13 @@ public class LinePoint
 	}
 	private void recurfill(double x, double y, double dx, double dy, BufferedImage img)
 	{
-		if ((x<0 && dx<0) || (x>imgWidth && dx>0) || (y<0 && dy<0) || (y>imgHeight && dy>0))
+		if ((x<0 && dx<0) || (x>img.getWidth() && dx>0) || (y<0 && dy<0) || (y>img.getHeight() && dy>0))
 		{
 			return;
 		}
 		int rx = (int)Math.round(x);
 		int ry = (int)Math.round(y);
-		if (rx>0 && rx<imgWidth && ry>0 && ry<imgHeight)
+		if (rx>0 && rx<img.getWidth() && ry>0 && ry<img.getHeight())
 		{
 			int c = img.getRGB(rx, ry);
 			if (c == -1)
