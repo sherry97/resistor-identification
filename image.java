@@ -174,8 +174,8 @@ public class image
 		// start
 		System.out.println("-------------------------START------------------------------");
 		STARTTIME = System.currentTimeMillis();
-		BufferedImage i = loadimage(new File("res4.png"));
-		i = canny(i);
+		BufferedImage img = loadimage(new File("res5.png"));
+		BufferedImage i = canny(img);
 		time("image loaded");
 		ArrayList<LinePoint> a = findAllLines(i);
 		time("all lines found");
@@ -200,7 +200,7 @@ public class image
 		System.out.println();
 		time("perpendicular lines drawn");
 
-		displayImage(i);
+		displayImage(img);
 		System.out.println("---------------------------END------------------------------");
 
 		System.out.println("\n--------------------------NOTES-----------------------------");
