@@ -164,6 +164,72 @@ public class image
 		return true;
 	}
 //--------------------//
+//	find distances between perpendicular lines to find pattern
+	private static ArrayList<Integer> findDistances(ArrayList<Integer> pastRadii)
+	{
+		ArrayList<Integer> distances = new ArrayList<Integer>();
+		System.out.println();
+		for (int i = 0; i < pastRadii.size()-1; i++)
+		{
+			int r1 = pastRadii.get(i);
+			int r2 = pastRadii.get(i+1);
+			int distance = Math.abs(r1-r2);
+			if (distance <= RADIUSRANGE)
+			{
+				continue;
+			}
+			System.out.println("---("+r1+", "+r2+") = "+distance);
+			distances.add(distance);
+		}
+		return distances;
+	}
+
+	private static double standarddev(ArrayList<Integer> arr)
+	{
+		int avg = 0;
+		for (int a : arr)
+		{
+			avg += a;
+		}
+		avg /= arr.size();
+		double dev = 0;
+		for (int a : arr)
+		{
+			dev += (a-avg)*(a-avg);
+		}
+		dev /= arr.size();
+		dev = Math.sqrt(dev);
+		return dev;
+	}
+//--------------------//
+	private static boolean findBarDistances(ArrayList<Integer> distances)
+	{
+		ArrayList<Integer> r1 = new ArrayList<Integer>();
+		ArrayList<Integer> r2 = new ArrayList<Integer>();
+		int avg1 = 0;
+		int avg2 = 0;
+		for (int j = 0; j < distances.size(); j++)
+		{
+			if (j%2 == 0)
+			{
+				r1.add(distances.get(j));
+				avg1 += distances.get(j);
+			}
+			else
+			{
+				r2.add(distances.get(j));
+				avg2 += distances.get(j);
+			}
+		}
+		double dev1 = standarddev(r1);
+		double dev2 = standarddev(r2);
+		if (dev1 <= dev2)
+		{
+			return true;
+		}
+		return false;
+	}
+//--------------------//
 	private static int NUM_BANDS = 4;
 	private static int RADIUSRANGE = 5;
 	private static long STARTTIME = 0;
@@ -172,9 +238,9 @@ public class image
 	public static void main(String[] args)
 	{
 		// start
-		System.out.println("-------------------------START------------------------------");
+		System.out.println("--------------------------START-----------------------------");
 		STARTTIME = System.currentTimeMillis();
-		BufferedImage img = loadimage(new File("res5.png"));
+		BufferedImage img = loadimage(new File("res4.png"));
 		BufferedImage i = canny(img);
 		time("image loaded");
 		ArrayList<LinePoint> a = findAllLines(i);
@@ -200,11 +266,38 @@ public class image
 		System.out.println();
 		time("perpendicular lines drawn");
 
+		//find pattern of distances between perpendicular lines
+		Collections.sort(pastradii);
+		ArrayList<Integer> distances = findDistances(pastradii);
+		System.out.println("distances.size(): "+distances.size()+"\n");
+		time("distances between perpendicular lines found");
+
+		boolean bool = findBarDistances(distances);
+		time("bar set found");
+
+		double perptheta = maxLine.getTheta()-Math.PI/2;
+		for (int q = 0; q < pastradii.size()-1; q++)
+		{
+			if ((pastradii.get(q+1)-pastradii.get(q)) < RADIUSRANGE)
+			{
+				continue;
+			}
+			if (bool)
+			{
+				for (int rad = pastradii.get(q); rad < pastradii.get(q+1); rad++)
+				{
+					LinePoint newLine = new LinePoint(rad, perptheta, img);
+					drawLine(newLine, img);
+				}
+			}
+			bool = !bool;
+		}
+		time("bar set colored in");
 		displayImage(img);
 		System.out.println("---------------------------END------------------------------");
 
 		System.out.println("\n--------------------------NOTES-----------------------------");
-		System.out.println(" find pattern of bar spacing >> analyze color >> spit numbers");
+		System.out.println(" analyze color >> spit numbers");
 		System.out.println(" check res5.png");
 		System.out.println("--------------------------NOTES-----------------------------");
 	}
